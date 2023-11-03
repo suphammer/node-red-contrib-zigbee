@@ -30,6 +30,7 @@
   "dependencies": {
     "debug": "^4.3.1",
     "mkdirp": "^1.0.4",
+    "node-red": "^3.1.0",
     "obj-ease": "^1.0.1",
     "vis": "^4.21.0",
     "zigbee-herdsman": "^0.21.0",
@@ -44,7 +45,8 @@
     "postpublish": "git tag v$(jq -r '.version' package.json) && git push --no-verify --tags",
     "test": "camo-purge; xo",
     "lintfix": "xo --fix",
-    "lintonly": "xo"
+    "lintonly": "xo",
+    "start": "node debug/server.js"
   },
   "husky": {
     "hooks": {
