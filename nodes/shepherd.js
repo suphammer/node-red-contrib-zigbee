@@ -634,6 +634,9 @@ module.exports = function (RED) {
                         }
                     });
                 }
+
+				this.permitJoin(true);
+
                 this.checkOverdueInterval = setInterval(() => {
                     this.checkOverdue();
                 }, 60 * 1000);

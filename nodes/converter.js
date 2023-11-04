@@ -1,5 +1,6 @@
 const herdsmanConverters = require('zigbee-herdsman-converters');
 const utils = require('../lib/utils.js');
+const local_devices = require('./devices.js');
 
 module.exports = function (RED) {
     RED.httpAdmin.get('/zigbee-shepherd/converters', RED.auth.needsPermission('zigbee.read'), (req, res) => {
@@ -296,13 +297,18 @@ module.exports = function (RED) {
         }
 
         getModelFromDevice(device) {
-            if (this.models.has(device.modelID)) {
+			console.info("getModelFromDevice: " + device.modelID);
+  /*
+			if (this.models.has(device.modelID)) {
                 return this.models.get(device.modelID);
             }
-
+*/
             const model = herdsmanConverters.findByDevice(device);
             this.models.set(device.modelID, model);
-            return model;
+			console.info("model: " + model);
+			//console.info("lookup: " + local_devices.match(device.modelID));
+			return local_devices[0];
+            //return model;
         }
 
         getPayloadFromMsg(msg, attribute) {
