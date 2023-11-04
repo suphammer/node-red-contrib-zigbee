@@ -1,6 +1,6 @@
 const herdsmanConverters = require('zigbee-herdsman-converters');
 const utils = require('../lib/utils.js');
-const local_devices = require('./devices.js');
+const local_models = require('./models.js');
 
 module.exports = function (RED) {
     RED.httpAdmin.get('/zigbee-shepherd/converters', RED.auth.needsPermission('zigbee.read'), (req, res) => {
@@ -297,18 +297,24 @@ module.exports = function (RED) {
         }
 
         getModelFromDevice(device) {
-			console.info("getModelFromDevice: " + device.modelID);
-  /*
-			if (this.models.has(device.modelID)) {
-                return this.models.get(device.modelID);
+            // Check for local model first
+			const model = local_models.find((deviceDefinition) => deviceDefinition.model === device.modelID);
+            if (model)
+            {
+                console.log('Local Device with model found:', model.model);
             }
-*/
-            const model = herdsmanConverters.findByDevice(device);
-            this.models.set(device.modelID, model);
-			console.info("model: " + model);
-			//console.info("lookup: " + local_devices.match(device.modelID));
-			return local_devices[0];
-            //return model;
+            // If no match for local model, search for the hardsman models.
+            else
+            {
+                console.log(`Local Device with model '${targetModel}' not found.`);
+                if (this.models.has(device.modelID)) {
+                    return this.models.get(device.modelID);
+                }
+                const model = herdsmanConverters.findByDevice(device);
+                this.models.set(device.modelID, model);
+            }
+
+            return model;
         }
 
         getPayloadFromMsg(msg, attribute) {
