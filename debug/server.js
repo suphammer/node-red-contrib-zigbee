@@ -57,7 +57,11 @@ var settings = {
   httpNodeRoot: "/",
   userDir: "./.nodered",
   nodesDir: "./nodes",
-  flowFile: "./debug/debug-flows.json"
+  logging: {
+	console: {
+		level: "debug"
+	}
+  }
 };
 
 // Initialise the runtime with a server and settings
