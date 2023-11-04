@@ -11,10 +11,6 @@
 
 "use strict" /* always for Node.JS, never global in the browser */;
 
-// logging ************
-// you should consider using the packages debug and console-stamp to
-// incorporate standard logging with node-red logging
-
 // The TCP port for this systems web interface - picked up from env, package.json or fixed value
 const http_port =
   process.env.HTTPPORT || process.env.npm_package_config_http_port || 1880;
@@ -36,9 +32,6 @@ const fs = require("fs");
 // Create an Express app
 var app = express();
 
-// Add a simple route for static content served from './public'
-app.use("/", express.static("./public"));
-
 // Create the http(s) server
 if (use_https) {
   var privateKey = fs.readFileSync("./server.key", "utf8");
@@ -53,26 +46,24 @@ var httpServer = use_https
   : http.createServer(app);
 
 var settings = {
-  httpAdminRoot: "/admin",
-  httpNodeRoot: "/",
   userDir: "./.nodered",
   nodesDir: "./nodes",
+  credentialSecret: "",
   flowFile: "./debug/debug-flows.json"
 };
 
 // Initialise the runtime with a server and settings
 // @see http://nodered.org/docs/configuration.html
 RED.init(httpServer, settings);
-app.use(settings.httpAdminRoot, RED.httpAdmin);
-app.use(settings.httpNodeRoot, RED.httpNode);
+
+app.use("/", RED.httpAdmin);
 
 httpServer.listen(http_port, listening_address, function() {
   console.info(
-    "Express 4 https server listening on http%s://%s:%d%s, serving node-red",
+    "Web server listening on http%s://%s:%d/, serving node-red",
     use_https ? "s" : "",
     httpServer.address().address.replace("0.0.0.0", "localhost"),
-    httpServer.address().port,
-    settings.httpAdminRoot
+    httpServer.address().port
   );
 });
 // Start the runtime
